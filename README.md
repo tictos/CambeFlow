@@ -1,6 +1,33 @@
 # Cambe Flow 💱
 
-**Cambe Flow** est une application Android moderne et réactive de conversion de devises et de suivi des marchés financiers, conçue avec **Kotlin** et **Jetpack Compose**. Elle propose un flux de cotations en temps réel, des graphiques historiques interactifs, un système d'alertes de prix intelligent et la persistance locale complète des transactions.
+<p align="center">
+  <img src="assets/banner.png" alt="Cambe Flow Banner" width="100%" />
+</p>
+
+<p align="center">
+  <b>Application Android moderne de conversion de devises et d'analyse des marchés financiers en temps réel</b>
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/Kotlin-2.0-blue.svg?logo=kotlin" alt="Kotlin" />
+  <img src="https://img.shields.io/badge/Jetpack%20Compose-Material%203-brightgreen.svg?logo=android" alt="Compose" />
+  <img src="https://img.shields.io/badge/Room-Database-orange.svg" alt="Room" />
+  <img src="https://img.shields.io/badge/Architecture-MVVM%20%2B%20Coroutines-purple.svg" alt="Architecture" />
+  <img src="https://img.shields.io/badge/License-Apache%202.0-blue.svg" alt="License" />
+</p>
+
+---
+
+## 📱 Aperçu & Captures d'écran
+
+<p align="center">
+  <img src="assets/screenshot_converter.png" width="23%" alt="Convertisseur" />
+  <img src="assets/screenshot_markets.png" width="23%" alt="Marchés" />
+  <img src="assets/screenshot_trends.png" width="23%" alt="Tendances & Graphiques" />
+  <img src="assets/screenshot_alerts.png" width="23%" alt="Alertes de Prix" />
+</p>
+
+> 💡 *Déposez vos captures d'écran dans le dossier `assets/` (`banner.png`, `screenshot_converter.png`, `screenshot_markets.png`, `screenshot_trends.png`, `screenshot_alerts.png`).*
 
 ---
 
@@ -107,4 +134,5 @@ gradle :app:testDebugUnitTest
 ---
 
 ## 📄 Licence
-Ce projet est développé pour le prototypage et la production d'applications mobiles modernes sur la plateforme Google AI Studio.
+
+Ce projet est distribué sous licence **Apache 2.0**. Consultez le fichier [`LICENSE`](LICENSE) pour plus d'informations.
