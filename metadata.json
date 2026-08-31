@@ -1,0 +1,6 @@
+{
+  "name": "Cambe Flow",
+  "description": "Application de conversion de devises avec taux en temps réel, graphiques de tendances historiques interactifs, alertes de prix et historique des transactions.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
