@@ -5,10 +5,10 @@ import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
 data class ExchangeRateApiResponse(
-    @Json(name = "result") val result: String?,
-    @Json(name = "base_code") val baseCode: String?,
-    @Json(name = "rates") val rates: Map<String, Double>?,
-    @Json(name = "time_last_update_utc") val timeLastUpdate: String?
+    @Json(name = "result") val result: String? = null,
+    @Json(name = "base_code") val baseCode: String? = null,
+    @Json(name = "rates") val rates: Map<String, Double>? = null,
+    @Json(name = "time_last_update_utc") val timeLastUpdate: String? = null
 )
 
 data class ChartPoint(

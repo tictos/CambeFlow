@@ -42,7 +42,13 @@ data class AsyncStreamStatus(
 
 class TradeFlowViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val repository: CurrencyRepository
+    private val db = TradeFlowDatabase.getDatabase(application)
+    private val apiService = ExchangeRateApiService.create()
+    private val repository = CurrencyRepository(
+        apiService = apiService,
+        alertDao = db.alertDao(),
+        historyDao = db.historyDao()
+    )
 
     // Asynchronous jobs
     private var liveStreamJob: Job? = null
@@ -53,28 +59,6 @@ class TradeFlowViewModel(application: Application) : AndroidViewModel(applicatio
     // Asynchronous Stream State
     private val _asyncStreamStatus = MutableStateFlow(AsyncStreamStatus())
     val asyncStreamStatus = _asyncStreamStatus.asStateFlow()
-
-    init {
-        val db = TradeFlowDatabase.getDatabase(application)
-        val apiService = ExchangeRateApiService.create()
-        repository = CurrencyRepository(
-            apiService = apiService,
-            alertDao = db.alertDao(),
-            historyDao = db.historyDao()
-        )
-
-        // Seed initial data asynchronously on IO thread
-        viewModelScope.launch(Dispatchers.IO) {
-            repository.seedInitialDataIfEmpty()
-            repository.refreshRates()
-        }
-
-        // Launch concurrent background engines
-        startLiveStreamTicker()
-        startAutoSyncLoop()
-        startAlertSentinelLoop()
-        recomputeChartDataAsync()
-    }
 
     // Navigation
     private val _currentScreen = MutableStateFlow(AppScreen.CONVERTER)
@@ -190,6 +174,24 @@ class TradeFlowViewModel(application: Application) : AndroidViewModel(applicatio
     private val _triggeredAlertMessage = MutableStateFlow<String?>(null)
     val triggeredAlertMessage = _triggeredAlertMessage.asStateFlow()
 
+    init {
+        // Seed initial data asynchronously on IO thread
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                repository.seedInitialDataIfEmpty()
+                repository.refreshRates()
+            } catch (t: Throwable) {
+                // Fallback gracefully to offline state
+            }
+        }
+
+        // Launch concurrent background engines
+        startLiveStreamTicker()
+        startAutoSyncLoop()
+        startAlertSentinelLoop()
+        recomputeChartDataAsync()
+    }
+
     fun dismissTriggeredAlert() {
         _triggeredAlertMessage.value = null
     }
@@ -202,25 +204,29 @@ class TradeFlowViewModel(application: Application) : AndroidViewModel(applicatio
         liveStreamJob?.cancel()
         liveStreamJob = viewModelScope.launch(Dispatchers.Default) {
             while (isActive) {
-                if (_asyncStreamStatus.value.isStreaming) {
-                    val start = System.currentTimeMillis()
-                    repository.applyMicroTick()
-                    val latency = (System.currentTimeMillis() - start).coerceAtLeast(12) + (10..22).random()
+                try {
+                    if (_asyncStreamStatus.value.isStreaming) {
+                        val start = System.currentTimeMillis()
+                        repository.applyMicroTick()
+                        val latency = (System.currentTimeMillis() - start).coerceAtLeast(12) + (10..22).random()
 
-                    _asyncStreamStatus.update { current ->
-                        current.copy(
-                            tickCount = current.tickCount + 1,
-                            latencyMs = latency,
-                            lastTickTimestamp = System.currentTimeMillis()
-                        )
-                    }
+                        _asyncStreamStatus.update { current ->
+                            current.copy(
+                                tickCount = current.tickCount + 1,
+                                latencyMs = latency,
+                                lastTickTimestamp = System.currentTimeMillis()
+                            )
+                        }
 
-                    // Update selected pair rate dynamically
-                    val curPair = _selectedPair.value
-                    val newRate = repository.getRate(curPair.baseCurrency.code, curPair.targetCurrency.code)
-                    if (kotlin.math.abs(newRate - curPair.rate) > 0.000001) {
-                        _selectedPair.value = curPair.copy(rate = newRate)
+                        // Update selected pair rate dynamically
+                        val curPair = _selectedPair.value
+                        val newRate = repository.getRate(curPair.baseCurrency.code, curPair.targetCurrency.code)
+                        if (kotlin.math.abs(newRate - curPair.rate) > 0.000001) {
+                            _selectedPair.value = curPair.copy(rate = newRate)
+                        }
                     }
+                } catch (t: Throwable) {
+                    // Safe guard against background calculation issues
                 }
                 delay(2000L) // 2s asynchronous tick interval
             }
@@ -231,12 +237,16 @@ class TradeFlowViewModel(application: Application) : AndroidViewModel(applicatio
         autoSyncJob?.cancel()
         autoSyncJob = viewModelScope.launch(Dispatchers.IO) {
             while (isActive) {
-                val intervalSec = _asyncStreamStatus.value.autoSyncIntervalSec
-                if (intervalSec > 0 && _asyncStreamStatus.value.isAutoSyncRunning) {
-                    delay(intervalSec * 1000L)
-                    repository.refreshRates()
-                    _asyncStreamStatus.update { it.copy(lastSyncTimestamp = System.currentTimeMillis()) }
-                } else {
+                try {
+                    val intervalSec = _asyncStreamStatus.value.autoSyncIntervalSec
+                    if (intervalSec > 0 && _asyncStreamStatus.value.isAutoSyncRunning) {
+                        delay(intervalSec * 1000L)
+                        repository.refreshRates()
+                        _asyncStreamStatus.update { it.copy(lastSyncTimestamp = System.currentTimeMillis()) }
+                    } else {
+                        delay(5000L)
+                    }
+                } catch (t: Throwable) {
                     delay(5000L)
                 }
             }
@@ -247,11 +257,15 @@ class TradeFlowViewModel(application: Application) : AndroidViewModel(applicatio
         alertSentinelJob?.cancel()
         alertSentinelJob = viewModelScope.launch(Dispatchers.IO) {
             while (isActive) {
-                delay(3000L)
-                val triggered = repository.checkAndTriggerAlerts()
-                if (triggered.isNotEmpty()) {
-                    val first = triggered.first()
-                    _triggeredAlertMessage.value = "🚨 Alerte Déclenchée : ${first.baseCode}/${first.targetCode} a atteint ${String.format(Locale.US, "%.4f", first.currentRate)} !"
+                try {
+                    delay(3000L)
+                    val triggered = repository.checkAndTriggerAlerts()
+                    if (triggered.isNotEmpty()) {
+                        val first = triggered.first()
+                        _triggeredAlertMessage.value = "🚨 Alerte Déclenchée : ${first.baseCode}/${first.targetCode} a atteint ${String.format(Locale.US, "%.4f", first.currentRate)} !"
+                    }
+                } catch (t: Throwable) {
+                    // Safe guard
                 }
             }
         }
@@ -260,17 +274,22 @@ class TradeFlowViewModel(application: Application) : AndroidViewModel(applicatio
     private fun recomputeChartDataAsync() {
         chartComputationJob?.cancel()
         chartComputationJob = viewModelScope.launch(Dispatchers.Default) {
-            _isChartComputing.value = true
-            val pair = _selectedPair.value
-            val timeFrame = _selectedTimeFrame.value
-            val currentRate = pair.rate
+            try {
+                _isChartComputing.value = true
+                val pair = _selectedPair.value
+                val timeFrame = _selectedTimeFrame.value
+                val currentRate = pair.rate
 
-            val points = repository.getChartPointsAsync(pair.symbol, timeFrame, currentRate)
-            val candles = repository.getCandleStickDataAsync(pair.symbol, timeFrame, currentRate)
+                val points = repository.getChartPointsAsync(pair.symbol, timeFrame, currentRate)
+                val candles = repository.getCandleStickDataAsync(pair.symbol, timeFrame, currentRate)
 
-            _chartPoints.value = points
-            _candleStickData.value = candles
-            _isChartComputing.value = false
+                _chartPoints.value = points
+                _candleStickData.value = candles
+            } catch (t: Throwable) {
+                // Fallback gracefully
+            } finally {
+                _isChartComputing.value = false
+            }
         }
     }
 

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="48"
+    android:viewportHeight="48">
+
+    <!-- Background rounded square with gradient -->
+    <path
+        android:pathData="M10,0 L38,0 A10,10 0 0 1 48,10 L48,38 A10,10 0 0 1 38,48 L10,48 A10,10 0 0 1 0,38 L0,10 A10,10 0 0 1 10,0 Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:angle="135"
+                android:startColor="#0284C7"
+                android:endColor="#0F172A"
+                android:type="linear" />
+        </aapt:attr>
+    </path>
+
+    <!-- Glowing accent border -->
+    <path
+        android:pathData="M10,1 L38,1 A9,9 0 0 1 47,10 L47,38 A9,9 0 0 1 38,47 L10,47 A9,9 0 0 1 1,38 L1,10 A9,9 0 0 1 10,1 Z"
+        android:strokeWidth="1.2"
+        android:strokeColor="#38BDF8"
+        android:fillColor="#00000000" />
+
+    <!-- Top Arrow (Green) -->
+    <path
+        android:pathData="M15,18 L33,18 M29,14 L33,18 L29,22"
+        android:strokeWidth="2.8"
+        android:strokeColor="#10B981"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+
+    <!-- Bottom Arrow (Cyan) -->
+    <path
+        android:pathData="M33,32 L15,32 L19,28 M15,32 L19,36"
+        android:strokeWidth="2.8"
+        android:strokeColor="#38BDF8"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+
+    <!-- Center Currency Symbol ($) -->
+    <path
+        android:pathData="M22,22 C22,20.8 22.8,20 24,20 C25.2,20 26,20.8 26,22 C26,24.5 22,25 22,27.5 C22,28.8 22.8,29.5 24,29.5 C25.2,29.5 26,28.8 26,27.5 M24,19 L24,30.5"
+        android:strokeWidth="2.0"
+        android:strokeColor="#FBBF24"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+</vector>

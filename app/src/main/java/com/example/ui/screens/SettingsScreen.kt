@@ -71,13 +71,12 @@ fun SettingsScreen(
                 horizontalArrangement = Arrangement.spacedBy(14.dp)
             ) {
                 Image(
-                    painter = painterResource(id = R.drawable.ic_cambeflow_logo_1788212572616),
+                    painter = painterResource(id = R.drawable.ic_app_brand_logo),
                     contentDescription = "Cambe Flow Icon",
                     modifier = Modifier
                         .size(52.dp)
-                        .clip(RoundedCornerShape(12.dp))
-                        .border(1.dp, Primary, RoundedCornerShape(12.dp)),
-                    contentScale = ContentScale.Crop
+                        .clip(RoundedCornerShape(12.dp)),
+                    contentScale = ContentScale.Fit
                 )
 
                 Column {

@@ -75,13 +75,12 @@ fun TradeFlowTopBar(
                 horizontalArrangement = Arrangement.spacedBy(10.dp)
             ) {
                 Image(
-                    painter = painterResource(id = R.drawable.ic_cambeflow_logo_1788212572616),
+                    painter = painterResource(id = R.drawable.ic_app_brand_logo),
                     contentDescription = "Cambe Flow Logo",
                     modifier = Modifier
                         .size(36.dp)
-                        .clip(RoundedCornerShape(10.dp))
-                        .border(1.dp, Primary.copy(alpha = 0.5f), RoundedCornerShape(10.dp)),
-                    contentScale = ContentScale.Crop
+                        .clip(RoundedCornerShape(10.dp)),
+                    contentScale = ContentScale.Fit
                 )
 
                 Column {
