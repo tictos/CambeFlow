@@ -27,7 +27,6 @@
   <img src="assets/screenshot_alerts.jpg" width="23%" alt="Alertes de Prix" />
 </p>
 
-> 💡 *Déposez vos captures d'écran dans le dossier `assets/` (`banner.png`, `screenshot_converter.png`, `screenshot_markets.png`, `screenshot_trends.png`, `screenshot_alerts.png`).*
 
 ---
 
