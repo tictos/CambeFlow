@@ -21,10 +21,10 @@
 ## 📱 Aperçu & Captures d'écran
 
 <p align="center">
-  <img src="assets/screenshot_converter.png" width="23%" alt="Convertisseur" />
-  <img src="assets/screenshot_markets.png" width="23%" alt="Marchés" />
-  <img src="assets/screenshot_trends.png" width="23%" alt="Tendances & Graphiques" />
-  <img src="assets/screenshot_alerts.png" width="23%" alt="Alertes de Prix" />
+  <img src="assets/screenshot_converter.jpg" width="23%" alt="Convertisseur" />
+  <img src="assets/screenshot_markets.jpg" width="23%" alt="Marchés" />
+  <img src="assets/screenshot_trends.jpg" width="23%" alt="Tendances & Graphiques" />
+  <img src="assets/screenshot_alerts.jpg" width="23%" alt="Alertes de Prix" />
 </p>
 
 > 💡 *Déposez vos captures d'écran dans le dossier `assets/` (`banner.png`, `screenshot_converter.png`, `screenshot_markets.png`, `screenshot_trends.png`, `screenshot_alerts.png`).*
